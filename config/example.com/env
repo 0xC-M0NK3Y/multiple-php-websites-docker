@@ -1,0 +1,3 @@
+SQL_DATABASE=example_db
+SQL_USER=example_user
+SQL_PASS=example_pass

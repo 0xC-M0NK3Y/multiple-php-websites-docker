@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  php:
+    container_name: php
+    build:
+      context: .
+      dockerfile: ./requirements/php/Dockerfile
+    networks:
+      - 'linker'
+    volumes:
+      - data-volume:/var/www/websites
+    depends_on:
+      - mariadb
+
+  apache2:
+    container_name: apache2
+    build:
+      context: .
+      dockerfile: ./requirements/apache2/Dockerfile
+    networks:
+      - 'linker'
+    volumes:
+      - data-volume:/var/www/websites
+    ports:
+      - "443:443"
+      - "80:80"
+    depends_on:
+      - php
+
+  mariadb:
+    container_name: mariadb
+    build:
+      context: .
+      dockerfile: ./requirements/mariadb/Dockerfile
+    networks:
+      - 'linker'
+    volumes:
+      - db-volume:/var/lib/mysql
+
+networks:
+  linker:
+    driver: bridge
+
+volumes:
+  data-volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ../data/websites
+  db-volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ../data/mariadb
